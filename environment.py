@@ -3,54 +3,45 @@ import matplotlib.pyplot as plt
 import os
  
 
-class microscope:
-    def __init__(self,path, startX, startY, endX,endY, color, thickness):
-
-        self.startX = startX
-        self.startY = startY
-        self.endX = endX
-        self.endY = endY
-        self.color = color
-        self.thickness = thickness
-        self.path = path
-        return
-
-    def environment(self):
+class environment:
+    """
+    Class for creating the task space (environment), where the agent can move around the image
+    
+    """
+    def __init__(self, image_path):
         
-        # path = r'images/livecell_train_val_images/A172_Phase_A7_1_00d00h00m_1.tif'
-        # path2 = r'/Users/jishaansayyed/Library/Mobile Documents/com~apple~CloudDocs/Downloads/PRI00631.JPG'
+        # read in sample space image
+        self.sample_space = cv2.imread(os.path.expanduser(image_path))
+        
+        # define the region of interest
+        self.roi_x = (0, 150)
+        self.roi_y = (0, 150)
+        
+        # obtain the region of interets in a new image (variable)
+        self.roi = self.sample_space[self.roi_y[0]:self.roi_y[1], self.roi_x[0]:self.roi_x[1]]
+        
+        # define top left and top right of region of interest
+        self.top_left = (self.roi_x[0], self.roi_y[0])
+        self.top_right = (self.roi_x[1], self.roi_y[1])
 
-        # Reading an image in default mode
-        image = cv2.imread(os.path.expanduser(self.path))
-        # Window name in which image is displayed
-        window_name = 'Cells'
-
-        # Start coordinate, here
-        # represents the top left corner of rectangle
-        start_point = (self.startY, self.startX)
-
-        # Ending coordinate, here
-        # represents the bottom right corner of rectangle
-        end_point = (self.endY, self.endX)
-
-        color = self.color
-
-        # Line thickness
-        thickness = self.thickness
-
-        # Using cv2.rectangle() method
-        # thickness
-        image = cv2.rectangle(image, start_point, end_point, color, thickness)
-        image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-
-        # Displaying the image 
-        plt.imshow(image_rgb)
-        plt.axis('off')
+        # draw a rectangle around region of interest 
+        self.display_sample_space = self.sample_space.copy()
+        cv2.rectangle(self.display_sample_space, self.top_left, self.top_right,
+                                             color=(255, 255, 0), thickness=1)
+        
+        # display region of interest 
+        fig, ax = plt.subplots(figsize = (8,8), ncols= 2)
+        ax[0].imshow(self.roi)
+        ax[0].axis('off')
+        
+        # display main samplace with region of interest
+        ax[1].imshow(self.display_sample_space)
+        ax[1].axis('off')
         plt.show()
+        
+    def move(self):
+        # decesions go here, they will move the region of interest
+        pass
+        
 
-
-
-properties = microscope(path='images/livecell_train_val_images/A172_Phase_A7_1_00d00h00m_1.tif',
-                        startX=0, startY=0, endX=120, endY=120, color=(255, 255, 0), thickness=1)
-
-microscope.environment(properties)
+environment1 = environment('images/livecell_train_val_images/A172_Phase_A7_1_00d00h00m_1.tif')
