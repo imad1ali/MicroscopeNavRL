@@ -73,8 +73,6 @@ class environment:
         plt.pause(0.0001)
         
         
-    
-        
 #------------------------------------------------------------------------------------------
         
 environment1 = environment('images/livecell_train_val_images/A172_Phase_A7_1_00d00h00m_1.tif')
