@@ -27,7 +27,7 @@ class environment:
         self.rectangle = plt.Rectangle([self.roi_x[0], self.roi_y[0]],
                                        self.roi_x[1]-self.roi_x[0],
                                        self.roi_y[1]-self.roi_y[0],
-                                       linewidth=2, edgecolor='red', facecolor='none')
+                                       linewidth=1, edgecolor='red', facecolor='none')
     
         # display region of interest 
         self.fig, self.ax = plt.subplots(figsize = (8,8), ncols= 2)
@@ -61,7 +61,7 @@ class environment:
         self.rectangle = plt.Rectangle([self.roi_x[0], self.roi_y[0]],
                                        self.roi_x[1]-self.roi_x[0],
                                        self.roi_y[1]-self.roi_y[0],
-                                       linewidth=2, edgecolor='red', facecolor='none')
+                                       linewidth=1, edgecolor='red', facecolor='none')
     
         # display region of interest 
         self.ax[0].imshow(self.roi)
