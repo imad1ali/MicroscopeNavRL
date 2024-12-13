@@ -1,18 +1,21 @@
 import cv2 
 import matplotlib.pyplot as plt
 import os
+import numpy as np
  
 
 class Environment:
     """
     Class for creating the task space (environment), where the agent can move around the image
-    
     """
     def __init__(self, image_path):
         
         # read in sample space image
-        self.sample_space = cv2.imread(os.path.expanduser(image_path))
-        
+        self.sample_space = cv2.imread(os.path.expanduser(image_path), cv2.IMREAD_UNCHANGED)
+        self.sample_space_8bit = (self.sample_space / np.max(self.sample_space) * 255).astype('uint8')
+
+        if self.sample_space is None:
+            raise ValueError(f"Image not found at the path: {image_path}")
         # define the region of interest
         self.roi_x = (0, 150)
         self.roi_y = (0, 150)
@@ -33,6 +36,7 @@ class Environment:
 
       
         self.roi = self.sample_space[self.roi_y[0]:self.roi_y[1], self.roi_x[0]:self.roi_x[1]]
+        self.roi_8bit = (self.roi / np.max(self.roi) * 255).astype('uint8')
         
     def update_display(self):
         display_image = self.sample_space.copy()
@@ -40,14 +44,15 @@ class Environment:
                     (self.roi_x[0], self.roi_y[0]),
                     (self.roi_x[1], self.roi_y[1]),
                     (0, 0, 255), 1)  # Red rectangle
-        cv2.imshow("Sample Space", display_image)
-        cv2.imshow("Region of Interest", self.roi)
+        #cv2.imshow("Sample Space", display_image)
+        cv2.imshow("Region of Interest", self.roi_8bit)
+        cv2.imshow('sample_space_8bit', self.sample_space_8bit)
         cv2.waitKey(100)  # Adds a small delay for smooth visualization
         
            
 #------------------------------------------------------------------------------------------
         
-environment1 = Environment(r'C:\Users\imad\Desktop\KRR\MicroscopeNavRL\images\A172_Phase_A7_1_00d00h00m_1.tif')
+environment1 = Environment(r"D:\OneDrive - MMU\Desktop\Knowledge Representation and Reasoning\MicroscopeNavRL\images\mask\A172_Phase_C7_1_00d00h00m_1_mask.tif")
 
 # move right 50 pixels
 for i in range(100):
