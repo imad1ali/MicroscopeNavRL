@@ -52,7 +52,7 @@ class Environment:
            
 #------------------------------------------------------------------------------------------
         
-environment1 = Environment(r"D:\OneDrive - MMU\Desktop\Knowledge Representation and Reasoning\MicroscopeNavRL\images\mask\A172_Phase_C7_1_00d00h00m_1_mask.tif")
+environment1 = Environment(r"images\mask\A172_Phase_C7_1_00d00h00m_1_mask.tif")
 
 # move right 50 pixels
 for i in range(100):
