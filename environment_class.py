@@ -2,8 +2,7 @@ import cv2
 import matplotlib.pyplot as plt
 import os
 import numpy as np
-
-
+ 
 
 class Environment:
     """
@@ -25,68 +24,45 @@ class Environment:
         self.roi = self.sample_space[self.roi_y[0]:self.roi_y[1], self.roi_x[0]:self.roi_x[1]]
 
     def move(self, move_x, move_y):
-
-
-
-        for i in range(300):
-           # decesions go here, they will move the region of interest
-           new_roi_x_start = self.roi_x[0] + move_x
-           new_roi_x_end = self.roi_x[1] + move_x
+        # decesions go here, they will move the region of interest
+        new_roi_x_start = self.roi_x[0] + move_x
+        new_roi_x_end = self.roi_x[1] + move_x
         
-           new_roi_y_start = self.roi_y[0] + move_y
-           new_roi_y_end = self.roi_y[1] + move_y
+        new_roi_y_start = self.roi_y[0] + move_y
+        new_roi_y_end = self.roi_y[1] + move_y
         
-           self.roi_x = (new_roi_x_start, new_roi_x_end)
-           self.roi_y = (new_roi_y_start, new_roi_y_end)
-  
+        self.roi_x = (new_roi_x_start, new_roi_x_end)
+        self.roi_y = (new_roi_y_start, new_roi_y_end)
+
       
-           self.roi = self.sample_space[self.roi_y[0]:self.roi_y[1], self.roi_x[0]:self.roi_x[1]]
-           self.roi_8bit = (self.roi / np.max(self.roi) * 255).astype('uint8')
-
-           num_labels, labeled_mask = cv2.connectedComponents(self.roi_8bit)
-           for label in range(1, num_labels):
-               if label not in self.detected_cells:
-                  self.detected_cells.add(label)
-                  print(f"Unique cells detected so far: {len(self.detected_cells)}")
-
-    
-        # # move right 50 pixels
-        # for i in range(50):
-           #self.move(1,0)
-           print("moved")
-           self.update_display()
-    
-        # move down 50 pixels
-        # for i in range(50):
-           #self.move(0,1)
-           #print("moved")
-           #self.update_display()
+        self.roi = self.sample_space[self.roi_y[0]:self.roi_y[1], self.roi_x[0]:self.roi_x[1]]
+        self.roi_8bit = (self.roi / np.max(self.roi) * 255).astype('uint8')
         
     def update_display(self):
-            display_image = self.sample_space.copy()
-            cv2.rectangle(display_image,
+        display_image = self.sample_space.copy()
+        cv2.rectangle(display_image,
                     (self.roi_x[0], self.roi_y[0]),
                     (self.roi_x[1], self.roi_y[1]),
                     (0, 0, 255), 1)  # Red rectangle
-            #cv2.imshow("Sample Space", display_image)
-            cv2.imshow("Region of Interest", self.roi_8bit)
-            cv2.imshow('sample_space_8bit', self.sample_space_8bit)
-            cv2.waitKey(100)  # Adds a small delay for smooth visualization
+        #cv2.imshow("Sample Space", display_image)
+        cv2.imshow("Region of Interest", self.roi_8bit)
+        cv2.imshow('sample_space_8bit', self.sample_space_8bit)
+        cv2.waitKey(100)  # Adds a small delay for smooth visualization
         
            
-#--------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------
         
-# environment1 = Environment(r"D:\OneDrive - MMU\Desktop\Knowledge Representation and Reasoning\MicroscopeNavRL\images\mask\A172_Phase_C7_1_00d00h00m_1_mask.tif")
+environment1 = Environment(r"D:\OneDrive - MMU\Desktop\Knowledge Representation and Reasoning\MicroscopeNavRL\images\mask\A172_Phase_C7_1_00d00h00m_1_mask.tif")
 
-# # move right 50 pixels
-# for i in range(100):
-#     environment1.move(1,0)
-#     print("moved")
-#     environment1.update_display()
+# move right 50 pixels
+for i in range(100):
+    environment1.move(1,0)
+    print("moved")
+    environment1.update_display()
     
-# # # move down 50 pixels
-# # for i in range(50):
-# #     environment1.move(0,1)
-# #     print("moved")
-# #     environment1.update_display()
-
+# move down 50 pixels
+for i in range(100):
+    environment1.move(0,1)
+    print("moved")
+    environment1.update_display()
+    
