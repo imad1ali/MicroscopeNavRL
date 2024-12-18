@@ -10,14 +10,13 @@ Ali's code
 class roi(Environment):
 
     def get_roi_cell_count(self):
-            
-
+        
+        self.detected_cells = set()
         self.move(0,1)     
         self.move(1,0) 
 
 
-        # return print(f"Unique cells detected so far: {len(self.detected_cells)}")
-
+        return print(f"Unique cells detected so far: {len(self.detected_cells)}")
 
 
 

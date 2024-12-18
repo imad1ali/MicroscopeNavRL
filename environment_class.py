@@ -27,7 +27,8 @@ class Environment:
     def move(self, move_x, move_y):
 
 
-        for i in range(200):
+
+        for i in range(300):
            # decesions go here, they will move the region of interest
            new_roi_x_start = self.roi_x[0] + move_x
            new_roi_x_end = self.roi_x[1] + move_x
@@ -40,27 +41,13 @@ class Environment:
   
       
            self.roi = self.sample_space[self.roi_y[0]:self.roi_y[1], self.roi_x[0]:self.roi_x[1]]
-           self.roi_8bit = (self.roi / np.max(self.roi) * 255).astype(np.uint8)
+           self.roi_8bit = (self.roi / np.max(self.roi) * 255).astype('uint8')
 
-           im_with_keypoints = cv2.cvtColor(self.roi_8bit, cv2.COLOR_GRAY2BGR)
-
-           contours, _ = cv2.findContours(self.roi_8bit, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-           print(f"Number of blobs detected: {len(contours)}")
-
-# Loop through each contour to draw a symbol (e.g., circle) at the centroid
-           for contour in contours:
-     
-               M = cv2.moments(contour)
-    
-    # Calculate the centroid (center) of the contour
-               if M["m00"] != 0:  # To avoid division by zero
-                  cX = int(M["m10"] / M["m00"])
-                  cY = int(M["m01"] / M["m00"])
-        
-                  cv2.circle(im_with_keypoints, (cX, cY), 10, (0, 0, 255), -1)  # Red circle with radius 10
-
-               cv2.imshow("Detected Blobs with Centroids", im_with_keypoints)
-               cv2.waitKey(100)
+           num_labels, labeled_mask = cv2.connectedComponents(self.roi_8bit)
+           for label in range(1, num_labels):
+               if label not in self.detected_cells:
+                  self.detected_cells.add(label)
+                  print(f"Unique cells detected so far: {len(self.detected_cells)}")
 
     
         # # move right 50 pixels
@@ -81,10 +68,10 @@ class Environment:
                     (self.roi_x[0], self.roi_y[0]),
                     (self.roi_x[1], self.roi_y[1]),
                     (0, 0, 255), 1)  # Red rectangle
-            # cv2.imshow("Sample Space", display_image)
-            # cv2.imshow("Region of Interest", self.roi_8bit)
+            #cv2.imshow("Sample Space", display_image)
+            cv2.imshow("Region of Interest", self.roi_8bit)
             cv2.imshow('sample_space_8bit', self.sample_space_8bit)
-            # cv2.waitKey(100)  # Adds a small delay for smooth visualization
+            cv2.waitKey(100)  # Adds a small delay for smooth visualization
         
            
 #--------------------------------------------------------------------------------------------
