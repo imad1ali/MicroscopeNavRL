@@ -23,24 +23,30 @@ class Environment:
         
         # obtain the region of interets in a new image (variable)
         self.roi = self.sample_space[self.roi_y[0]:self.roi_y[1], self.roi_x[0]:self.roi_x[1]]
+
         self.roi_8bit = (self.roi / np.max(self.roi) * 255).astype('uint8')
 
         self.global_label_mask = np.zeros_like(self.sample_space, dtype=np.uint8) 
         self.total_count = 0 
 
-        self.centroid_list = set()
+        self.bounding_box_coordinates = []  # List to store (x, y) coordinates of bounding boxes
       
 
     def move(self, move_x, move_y):
         # decesions go here, they will move the region of interest
-        new_roi_x_start = self.roi_x[0] + move_x
+        self.new_roi_x_start = self.roi_x[0] + move_x
         new_roi_x_end = self.roi_x[1] + move_x
         
-        new_roi_y_start = self.roi_y[0] + move_y
+        self.new_roi_y_start = self.roi_y[0] + move_y
         new_roi_y_end = self.roi_y[1] + move_y
+
         
-        self.roi_x = (new_roi_x_start, new_roi_x_end)
-        self.roi_y = (new_roi_y_start, new_roi_y_end)
+        self.roi_x = (self.new_roi_x_start, new_roi_x_end)
+        self.roi_y = (self.new_roi_y_start, new_roi_y_end)
+
+
+        # print(f"New roi coordinates: {(self.new_roi_x_start, self.new_roi_y_start), (new_roi_x_end, new_roi_y_end)}")
+
 
       
         self.roi = self.sample_space[self.roi_y[0]:self.roi_y[1], self.roi_x[0]:self.roi_x[1]]
@@ -64,40 +70,28 @@ class Environment:
         filtered_mask = np.zeros_like(self.binary_image, dtype=np.uint8)
         height, width = self.binary_image.shape
 
-        new_labels = set()
-        for label in range(1, num_labels): 
-            x, y, w, h, area = stats[label]
-            if x == 0 or y == 0 or (x + w) >= width or (y + h) >= height:
+        for self.label in range(1, num_labels): 
+            self.x, self.y, self.w, self.h, area = stats[self.label]
+            if self.x == 0 or self.y == 0 or (self.x + self.w) >= width or (self.y + self.h) >= height:
                 continue
-            filtered_mask[labels == label] = 255
+            filtered_mask[labels == self.label] = 255
+            self.get_bounding_boxes()
+
             cv2.imshow('Filtered Mask', filtered_mask)
             cv2.waitKey(100)
-        
+            
 
         num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(filtered_mask)
         print(f"Number of blobs in roi: {num_labels - 1}")
+        print(f"number of blobs detected so far: {len(self.bounding_box_coordinates)}") 
 
 
+    def get_bounding_boxes(self):
+        global_x = self.new_roi_x_start + self.x
+        global_y = self.new_roi_y_start + self.y
 
-
-
-
-
-        # contours, _ = cv2.findContours(self.roi_8bit, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        # filtered_contours = [contour for contour in contours if cv2.contourArea(contour) > 0]
-        # print(f"Number of blobs in roi: {len(filtered_contours)}")
-
-        # for counters in filtered_contours:
-
-        #     M = cv2.moments(counters)
-        #     if M["m00"] != 0:  # To avoid division by zero (no area)
-        #             cX = int(M["m10"] / M["m00"])  # Calculate X centroid
-        #             cY = int(M["m01"] / M["m00"])  # Calculate Y centroid
-        #             cv2.circle(im_with_keypoints, (cX, cY), 10, (0, 0, 255), -1)
-
-            
-        #     cv2.imshow("Detected Cells in ROI", im_with_keypoints)
-        #     cv2.waitKey(100)
+        if (global_x, global_y) not in self.bounding_box_coordinates:
+            self.bounding_box_coordinates.append((global_x, global_y))  
 
         
            
@@ -107,7 +101,7 @@ environment1 = Environment(r"images\mask\A172_Phase_C7_1_00d00h00m_1_mask.tif")
 
 # move right 50 pixels
 for i in range(200):
-    environment1.move(0,1)
+    environment1.move(1, 0)
     print("moved")
     environment1.get_roi_cell_count()
     environment1.update_display()
@@ -115,7 +109,7 @@ for i in range(200):
     
 # move down 50 pixels
 for i in range(200):
-    environment1.move(1,0)
+    environment1.move(0, 1)
     environment1.get_roi_cell_count()
     print("moved")
     environment1.update_display()
