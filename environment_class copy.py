@@ -44,10 +44,6 @@ class Environment:
         self.roi_x = (self.new_roi_x_start, new_roi_x_end)
         self.roi_y = (self.new_roi_y_start, new_roi_y_end)
 
-
-        # print(f"New roi coordinates: {(self.new_roi_x_start, self.new_roi_y_start), (new_roi_x_end, new_roi_y_end)}")
-
-
       
         self.roi = self.sample_space[self.roi_y[0]:self.roi_y[1], self.roi_x[0]:self.roi_x[1]]
         self.roi_8bit = (self.roi / np.max(self.roi) * 255).astype('uint8')
@@ -79,7 +75,7 @@ class Environment:
 
             cv2.imshow('Filtered Mask', filtered_mask)
             cv2.waitKey(100)
-            
+
 
         num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(filtered_mask)
         print(f"Number of blobs in roi: {num_labels - 1}")
@@ -101,7 +97,7 @@ environment1 = Environment(r"images\mask\A172_Phase_C7_1_00d00h00m_1_mask.tif")
 
 # move right 50 pixels
 for i in range(200):
-    environment1.move(1, 0)
+    environment1.move(0, 1)
     print("moved")
     environment1.get_roi_cell_count()
     environment1.update_display()
@@ -109,7 +105,7 @@ for i in range(200):
     
 # move down 50 pixels
 for i in range(200):
-    environment1.move(0, 1)
+    environment1.move(1, 0)
     environment1.get_roi_cell_count()
     print("moved")
     environment1.update_display()
