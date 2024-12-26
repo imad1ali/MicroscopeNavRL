@@ -29,13 +29,13 @@ class Model(Environment):
         action = self.actions[action_index]
         
         if action == "up":
-            self.move(0,-1)
+            self.move(0,-10)
         elif action == "down":
-            self.move(0,1)
+            self.move(0,10)
         elif action == "left":
-            self.move(-1,0)
+            self.move(-10,0)
         elif action == "right":
-            self.move(1,0)
+            self.move(10,0)
             
         self.update_display()
         

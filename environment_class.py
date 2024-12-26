@@ -70,6 +70,7 @@ class Environment:
                     (self.roi_x[1], self.roi_y[1]),
                     (0, 0, 255), 1)  # Red rectangle
         cv2.imshow("Sample Space", display_image)
+        cv2.imshow("ROI", self.roi_8bit)
         # cv2.imshow("Region of Interest", self.roi_8bit)
         # cv2.imshow('sample_space_8bit', self.sample_space_8bit)
         cv2.waitKey(100)
@@ -87,7 +88,7 @@ class Environment:
             filtered_mask[labels == self.label] = 255
             self.get_bounding_boxes()
 
-            cv2.imshow('Filtered Mask', filtered_mask)
+            #cv2.imshow('Filtered Mask', filtered_mask)
             cv2.waitKey(100)
 
 
