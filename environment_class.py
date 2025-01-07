@@ -88,9 +88,6 @@ class Environment:
             filtered_mask[labels == self.label] = 255
             self.get_bounding_boxes()
 
-            #cv2.imshow('Filtered Mask', filtered_mask)
-            cv2.waitKey(100)
-
 
         num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(filtered_mask)
         #print(f"Number of blobs in roi: {num_labels - 1}")
@@ -112,6 +109,10 @@ class Environment:
         col = int((self.roi_y[1]-self.roi_y[0])/2)
         
         return row, col
+    
+    def reset(self):
+        self.roi_x = (0, 150)
+        self.roi_y = (0, 150)
 
         
            

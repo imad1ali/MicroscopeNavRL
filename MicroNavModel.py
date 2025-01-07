@@ -12,16 +12,10 @@ class Model(Environment):
         self.env_path = env_path
         super().__init__(self.env_path)
         
-        self.state_current = {
-            
-            "roi_position" : tuple(np.subtract(self.get_roi_center(), (75,75))),
-            "roi_cell_count" : self.get_roi_cell_count()
-        }
+        self.state_current = [tuple(np.subtract(self.get_roi_center(), # Position of ROI
+                                    (75,75))),self.get_roi_cell_count()] # Number of cells in ROI
         
-        self.state_next = {
-            "roi_position" : None,
-            "roi_cell_count" : None
-        }
+        self.state_next = [None,None]
         
         self.actions = ['up', 'down', 'left', 'right']
     
@@ -41,16 +35,21 @@ class Model(Environment):
         
         # update next state
     
-        self.state_next["roi_cell_count"] = self.get_roi_cell_count()
-        self.state_next["roi_position"] = tuple(np.subtract(self.get_roi_center(), (75,75)))
+        self.state_next[1] = self.get_roi_cell_count()
+        self.state_next[0] = tuple(np.subtract(self.get_roi_center(), (75,75)))
         
         
         
     def contribution_fn(self):
-        return self.state_next["roi_cell_count"] - self.state_current["roi_cell_count"]
+        reward = (self.state_next[1] - self.state_current[1]) * 1  # Reward for finding new cells
+
+    # Reward for moving to a new location (if ROI center changes significantly)
+        if np.linalg.norm(np.subtract(self.state_next[0], self.state_current[0])) > 5:  # threshold for movement
+            reward += 5  # reward for exploring new area
+        return reward
         
     def update_current_state(self):
-        self.state_current.update(self.state_next)
+        self.state_current = self.state_next
         
         
         
