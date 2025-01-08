@@ -41,12 +41,12 @@ class QlearningPolicy:
 
   def train(self):
     #define training parameters 
-    epsilon = 0.5
-    discount_factor = 0.7 #discount_factor for future rewards
-    learning_rate = 0.9
+    epsilon = 0.2
+    discount_factor = 0.3 #discount_factor for future rewards
+    learning_rate = 0.6
     
 
-    for episode in range(100000):
+    for episode in range(10000):
       #choose which action to take (i.e., where to move next)
       action_index = self.get_next_action(epsilon)
 
@@ -91,7 +91,7 @@ class QlearningPolicy:
     
     
           
-policy = QlearningPolicy(r"images\mask\A172_Phase_C7_1_00d00h00m_1_mask.tif")
+policy = QlearningPolicy("images/mask/A172_Phase_C7_1_00d00h00m_1_mask.tif")
 policy.train()
 
 policy.run_policy('q_table.pkl')

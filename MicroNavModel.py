@@ -36,12 +36,31 @@ class Model(Environment):
         # update next state
     
         self.state_next[1] = self.get_roi_cell_count()
+
+       
+
         self.state_next[0] = tuple(np.subtract(self.get_roi_center(), (75,75)))
         
         
         
     def contribution_fn(self):
-        reward = (self.state_next[1] - self.state_current[1]) * 1  # Reward for finding new cells
+        if len(self.new_cells) > 0:
+           # Nested loop for comparison
+           exists = False
+           for row in self.new_cells:
+               for element in row:
+                   # frist = element.flatten()[0]
+                   # last = element.flatten[-1]
+                   # print(frist,last)
+                   if element in self.old_cells:
+                       exists = True
+                       break
+               if exists:
+                   break
+        if exists:
+            reward = -100
+        else:
+            reward = (self.state_next[1] - self.state_current[1]) * 1  # Reward for finding new cells
 
     # Reward for moving to a new location (if ROI center changes significantly)
         if np.linalg.norm(np.subtract(self.state_next[0], self.state_current[0])) > 5:  # threshold for movement

@@ -18,7 +18,8 @@ class Environment:
 
 
         # define the region of interest
-        
+        self.new_cells = []
+        self.old_cells = []
         self.roi_x = (0, 150)
         self.roi_y = (0, 150)
         
@@ -76,22 +77,51 @@ class Environment:
         cv2.waitKey(100)
         
     def get_roi_cell_count(self):
-
+        
         num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(self.binary_image, connectivity=8)
         filtered_mask = np.zeros_like(self.binary_image, dtype=np.uint8)
         height, width = self.binary_image.shape
+        blob_sizes = []
+        blob_coordinates = []
 
         for self.label in range(1, num_labels): 
             self.x, self.y, self.w, self.h, area = stats[self.label]
             if self.x == 0 or self.y == 0 or (self.x + self.w) >= width or (self.y + self.h) >= height:
                 continue
             filtered_mask[labels == self.label] = 255
+            blob_sizes.append(area)
+            # Get the coordinates of the pixels that belong to this blob
+            # np.where returns a tuple of arrays (rows, columns) for the pixels with the specified label
+            coordinates = np.column_stack(np.where(labels == self.label))
+            global_coordinates = coordinates + [self.roi_y[0], self.roi_x[0]]
+        
+            # Add the coordinates of the current blob to the list
+            blob_coordinates.append(global_coordinates)
             self.get_bounding_boxes()
+
+            global_coordinates_list = [tuple(coord) for coord in global_coordinates]
+
+
+            self.new_cells.append([self.label, global_coordinates_list])
 
 
         num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(filtered_mask)
         #print(f"Number of blobs in roi: {num_labels - 1}")
         #print(f"number of blobs detected so far: {len(self.bounding_box_coordinates)}")
+        display_image = cv2.cvtColor(self.sample_space_8bit.copy(), cv2.COLOR_GRAY2BGR)  # Convert to BGR for color display
+        for coordinates in blob_coordinates:
+            # Get min and max row, column for bounding box
+            min_row, min_col = np.min(coordinates, axis=0)
+            max_row, max_col = np.max(coordinates, axis=0)
+        
+            # Draw a red rectangle (bounding box) around the blob
+            cv2.rectangle(display_image, (min_col, min_row), (max_col, max_row), (0, 0, 255), 2)  # Red color, thickness=2
+    
+            # Show the image with bounding boxes
+            cv2.imshow("founded cells", display_image)
+        
+        # print(self.new_cells)
+
         return(num_labels-1) 
         
 
