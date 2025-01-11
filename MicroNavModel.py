@@ -31,7 +31,7 @@ class Model(Environment):
         elif action == "right":
             self.move(10,0)
             
-        self.update_display()
+        # self.update_display()
         
         # update next state
     
@@ -44,9 +44,10 @@ class Model(Environment):
         
         
     def contribution_fn(self):
+        exists = False
+        reward = -10
         if len(self.new_cells) > 0:
            # Nested loop for comparison
-           exists = False
            for row in self.new_cells:
                for element in row:
                    # frist = element.flatten()[0]
@@ -55,16 +56,17 @@ class Model(Environment):
                    if element in self.old_cells:
                        exists = True
                        break
-               if exists:
+               if exists == False:
+                   reward = (self.state_next[1] - self.state_current[1]) + 1  # Reward for finding new cells
+                   print(reward)
                    break
-        if exists:
-            reward = -100
         else:
             reward = (self.state_next[1] - self.state_current[1]) * 1  # Reward for finding new cells
 
     # Reward for moving to a new location (if ROI center changes significantly)
         if np.linalg.norm(np.subtract(self.state_next[0], self.state_current[0])) > 5:  # threshold for movement
             reward += 5  # reward for exploring new area
+            print(reward)
         return reward
         
     def update_current_state(self):
