@@ -20,7 +20,7 @@ class Model(Environment):
         self.actions = ['up', 'down', 'left', 'right']
         
         # first element of exog_info is Position of ROI and the second is Number of cells in ROI, and is enpty initially
-        self.exog_info = [None,None]
+        self.exog_info = [self.new_cells]
     
     def transition_fn(self, action_index):
         action = self.actions[action_index]
@@ -36,13 +36,13 @@ class Model(Environment):
             
         # self.update_display()
         
+        # update next exogenous info
+        self.exog_info = [self.new_cells]
+
         # update next state
-        self.exog_info = [tuple(np.subtract(self.get_roi_center(), (75,75))),
-                     self.get_roi_cell_count()]
-    
-        self.state_next[1] = self.exog_info[1]
-        self.state_next[0] = self.exog_info[0]
-         
+        self.state_next[1] = self.get_roi_cell_count()
+        self.state_next[0] = tuple(np.subtract(self.get_roi_center(), (75,75)))
+        
         
         
     def contribution_fn(self):
