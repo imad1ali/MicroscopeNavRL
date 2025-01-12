@@ -115,10 +115,10 @@ class Environment:
             max_row, max_col = np.max(coordinates, axis=0)
         
             # Draw a red rectangle (bounding box) around the blob
-            # cv2.rectangle(display_image, (min_col, min_row), (max_col, max_row), (0, 0, 255), 2)  # Red color, thickness=2
+            cv2.rectangle(display_image, (min_col, min_row), (max_col, max_row), (0, 0, 255), 2)  # Red color, thickness=2
     
             # Show the image with bounding boxes
-            # cv2.imshow("founded cells", display_image)
+            cv2.imshow("founded cells", display_image)
         
         # print(self.new_cells)
 

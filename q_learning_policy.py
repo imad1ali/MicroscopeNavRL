@@ -62,7 +62,7 @@ class QlearningPolicy:
             self.update_keys()
         
             #receive the reward for moving to the new state, and calculate the temporal difference
-            reward = self.model.contribution_fn()
+            reward = self.model.contribution_fn(self.current_state_key,self.next_state_key)
             
             total_reward += reward  # assigning the reward
             
@@ -114,7 +114,6 @@ for images in os.listdir(folder_dir):
       policy.train()
 
       policy.run_policy('q_table.pkl')
-      break;
           
 
 

@@ -20,7 +20,7 @@ class Model(Environment):
         self.actions = ['up', 'down', 'left', 'right']
         
         # first element of exog_info is Position of ROI and the second is Number of cells in ROI, and is enpty initially
-        self.exog_info = [self.new_cells]
+        self.exog_info = (self.new_cells)
     
     def transition_fn(self, action_index):
         action = self.actions[action_index]
@@ -34,10 +34,7 @@ class Model(Environment):
         elif action == "right":
             self.move(10,0)
             
-        # self.update_display()
-        
-        # update next exogenous info
-        self.exog_info = [self.new_cells]
+        self.update_display()
 
         # update next state
         self.state_next[1] = self.get_roi_cell_count()
@@ -45,10 +42,10 @@ class Model(Environment):
         
         
         
-    def contribution_fn(self):
+    def contribution_fn(self, current_state, next_state):
         exists = False
         reward = 0
-        new_cells_set = {tuple(cell) for cell in self.new_cells}  # Convert rows of new_cells to tuples
+        new_cells_set = {tuple(cell) for cell in self.exog_info}  # Convert rows of exog_info to see new cells
         old_cells_set = {tuple(cell) for cell in self.old_cells}  # Convert rows of old_cells to tuples
 
         new_cells_found = new_cells_set - old_cells_set
@@ -60,7 +57,7 @@ class Model(Environment):
            reward += len(new_cells_found) * 2
 
         # Reward for significant movement of ROI
-        movement_distance = np.linalg.norm(np.subtract(self.state_next[0], self.state_current[0]))
+        movement_distance = (np.subtract(current_state[1], next_state[1]))
         movement_threshold = 5  # Define a threshold for significant movement
         # Reward for moving to a new location (if ROI center changes significantly)
         if movement_distance > movement_threshold:  # threshold for movement
