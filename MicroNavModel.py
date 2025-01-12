@@ -47,28 +47,29 @@ class Model(Environment):
         
     def contribution_fn(self):
         exists = False
-        reward = -10
-        if len(self.new_cells) > 0:
-           # Nested loop for comparison
-           for row in self.new_cells:
-               for element in row:
-                   # frist = element.flatten()[0]
-                   # last = element.flatten[-1]
-                   # print(frist,last)
-                   if element in self.old_cells:
-                       exists = True
-                       break
-               if exists == False:
-                   reward = (self.state_next[1] - self.state_current[1]) + 1  # Reward for finding new cells
-                   print(reward)
-                   break
-        else:
-            reward = (self.state_next[1] - self.state_current[1]) * 1  # Reward for finding new cells
+        reward = 0
+        new_cells_set = {tuple(cell) for cell in self.new_cells}  # Convert rows of new_cells to tuples
+        old_cells_set = {tuple(cell) for cell in self.old_cells}  # Convert rows of old_cells to tuples
 
-    # Reward for moving to a new location (if ROI center changes significantly)
-        if np.linalg.norm(np.subtract(self.state_next[0], self.state_current[0])) > 5:  # threshold for movement
-            reward += 5  # reward for exploring new area
+        new_cells_found = new_cells_set - old_cells_set
+
+
+        if len(new_cells_found) > 0:
+           # Nested loop for comparison
+
+           reward += len(new_cells_found) * 2
+
+        # Reward for significant movement of ROI
+        movement_distance = np.linalg.norm(np.subtract(self.state_next[0], self.state_current[0]))
+        movement_threshold = 5  # Define a threshold for significant movement
+        # Reward for moving to a new location (if ROI center changes significantly)
+        if movement_distance > movement_threshold:  # threshold for movement
+            reward += 1  # reward for exploring new area
             print(reward)
+        if not new_cells_found and movement_distance <= movement_threshold:
+            reward -= 1  # Penalize lack of exploration and discovery
+        self.old_cells = self.new_cells
+        print(f"Reward: {reward} | New Cells: {len(new_cells_found)} | Movement Distance: {movement_distance}")
         return reward
         
     def update_current_state(self):

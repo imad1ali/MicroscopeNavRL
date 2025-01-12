@@ -50,34 +50,31 @@ class QlearningPolicy:
     discount_factor = 0.3 #discount_factor for future rewards
     learning_rate = 0.6
     rewards_per_episode = []  # for Tracking total rewards per episode
-    
-    for episode in range(100):
-            total_reward = 0 
+    total_reward = 0
 
-            for episode in range(100):
-              #choose which action to take (i.e., where to move next)
-              action_index = self.get_next_action(epsilon)
-
-              #perform the chosen action, and transition to the next state (i.e., move to the next location)
-              
-              self.model.transition_fn(action_index)
-              self.update_keys()
-          
-              #receive the reward for moving to the new state, and calculate the temporal difference
-              reward = self.model.contribution_fn()
-              
-              total_reward += reward  # assigning the reward
-              
-              old_q_value = self.q_table[self.next_state_key][action_index]
-              temporal_difference = reward + (discount_factor * np.max(self.q_table[self.next_state_key])) - old_q_value
-
-              #update the Q-value for the previous state and action pair
-              new_q_value = old_q_value + (learning_rate * temporal_difference)
-              self.q_table[self.current_state_key][action_index] = new_q_value
-              print(total_reward)
-              self.model.update_current_state()
-              ##print('debug')
-              rewards_per_episode.append(total_reward)
+    for episode in range(1000):
+            reward = 0
+            #choose which action to take (i.e., where to move next)
+            action_index = self.get_next_action(epsilon)
+            #perform the chosen action, and transition to the next state (i.e., move to the next location)
+            
+            self.model.transition_fn(action_index)
+            self.update_keys()
+        
+            #receive the reward for moving to the new state, and calculate the temporal difference
+            reward = self.model.contribution_fn()
+            
+            total_reward += reward  # assigning the reward
+            
+            old_q_value = self.q_table[self.next_state_key][action_index]
+            temporal_difference = reward + (discount_factor * np.max(self.q_table[self.next_state_key])) - old_q_value
+            #update the Q-value for the previous state and action pair
+            new_q_value = old_q_value + (learning_rate * temporal_difference)
+            self.q_table[self.current_state_key][action_index] = new_q_value
+            print(total_reward)
+            self.model.update_current_state()
+            ##print('debug')
+            rewards_per_episode.append(total_reward)
 
     print(rewards_per_episode)
     # Plot rewards

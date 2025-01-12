@@ -18,8 +18,8 @@ class Environment:
 
 
         # define the region of interest
-        self.new_cells = []
-        self.old_cells = []
+        self.new_cells = ()
+        self.old_cells = ()
         self.roi_x = (0, 150)
         self.roi_y = (0, 150)
         
@@ -102,7 +102,7 @@ class Environment:
             global_coordinates_list = [tuple(coord) for coord in global_coordinates]
 
 
-            self.new_cells.append([self.label, global_coordinates_list])
+            self.new_cells = self.new_cells + ("cell"+str(self.label), global_coordinates_list)
 
 
         num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(filtered_mask)
